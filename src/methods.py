@@ -2,21 +2,9 @@
 import numpy as np
 import sys
 
-number_of_equations = int(input('Enter number of unknowns: '))
 
-
-def gauss_elimination():
-    # Reading number of unknowns
-
-    input_equations = np.zeros((number_of_equations, number_of_equations + 1))
-
+def gauss_elimination(number_of_equations,input_equations):
     solution = np.zeros(number_of_equations)
-
-    # Reading augmented matrix coefficients
-    print('Enter Augmented Matrix Coefficients:')
-    for i in range(number_of_equations):
-        for j in range(number_of_equations + 1):
-            input_equations[i][j] = float(input('a[' + str(i) + '][' + str(j) + ']='))
 
     # Applying Gauss Elimination
     for i in range(number_of_equations):
@@ -41,21 +29,12 @@ def gauss_elimination():
         solution[i] = solution[i] / input_equations[i][i]
 
     # Displaying solution
-    print('\nRequired solution is: ')
-    for i in range(number_of_equations):
-        print('X%d = %0.2f' % (i, solution[i]), end='\t')
+    return solution
 
 
-def gauss_jordan():
-    input_equations = np.zeros((number_of_equations, number_of_equations + 1))
+def gauss_jordan(number_of_equations, input_equations):
 
     solution = np.zeros(number_of_equations)
-
-    # Reading augmented matrix coefficients
-    print('Enter Augmented Matrix Coefficients:')
-    for i in range(number_of_equations):
-        for j in range(number_of_equations + 1):
-            input_equations[i][j] = float(input('a[' + str(i) + '][' + str(j) + ']='))
 
     # Applying Gauss Jordan Elimination
     for i in range(number_of_equations):
@@ -75,12 +54,10 @@ def gauss_jordan():
         solution[i] = input_equations[i][number_of_equations] / input_equations[i][i]
 
     # Displaying solution
-    print('\nRequired solution is: ')
-    for i in range(number_of_equations):
-        print('X%d = %0.2f' % (i, solution[i]), end='\t')
+    return solution
 
 
-def LU(A):
+def LU(number_of_equations, A):
     # n = len(A)  # Give us total of lines
 
     # (1) Extract the b vector
