@@ -1,4 +1,7 @@
 .vscode
 .idea
-__pychache__
+*/__pycache__
+__pycache__
 out/*
+*.pdf
+src/parse.py

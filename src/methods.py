@@ -1,21 +1,23 @@
 # Importing NumPy Library
 import numpy as np
-import sys
 
 
 def gauss_elimination(number_of_equations,input_equations):
     solution = np.zeros(number_of_equations)
 
+
     # Applying Gauss Elimination
     for i in range(number_of_equations):
         if input_equations[i][i] == 0.0:
-            sys.exit('Divide by zero detected!')
+            raise ZeroDivisionError('Divide by zero detected!')
 
         for j in range(i + 1, number_of_equations):
-            ratio = input_equations[j][i] / input_equations[i][i]
+            ratio = input_equations[j][i] / input_equations[i][i]  
 
             for k in range(number_of_equations + 1):
                 input_equations[j][k] = input_equations[j][k] - ratio * input_equations[i][k]
+
+
 
     # Back Substitution
     solution[number_of_equations - 1] = input_equations[number_of_equations - 1][number_of_equations] / input_equations[number_of_equations - 1][number_of_equations - 1]
@@ -39,7 +41,7 @@ def gauss_jordan(number_of_equations, input_equations):
     # Applying Gauss Jordan Elimination
     for i in range(number_of_equations):
         if input_equations[i][i] == 0.0:
-            sys.exit('Divide by zero detected!')
+            raise ZeroDivisionError('Divide by zero detected!')
 
         for j in range(number_of_equations):
             if i != j:
@@ -81,17 +83,17 @@ def LU(number_of_equations, A):
     # (4) Find both U and L matrices
     for i in range(0, n):  # for i in [0,1,2,..,n]
         # (4.1) Find the maximum value in a column in order to change lines
-        maxElem = abs(U[i][i])
-        maxRow = i
+        max_elem = abs(U[i][i])
+        max_row = i
         for k in range(i + 1, n):  # Interacting over the next line
-            if abs(U[k][i]) > maxElem:
-                maxElem = abs(U[k][i])  # Next line on the diagonal
-                maxRow = k
+            if abs(U[k][i]) > max_elem:
+                max_elem = abs(U[k][i])  # Next line on the diagonal
+                max_row = k
 
         # (4.2) Swap the rows pivoting the maxRow, i is the current row
         for k in range(i, n):  # Interacting column by column
-            tmp = U[maxRow][k]
-            U[maxRow][k] = U[i][k]
+            tmp = U[max_row][k]
+            U[max_row][k] = U[i][k]
             U[i][k] = tmp
 
         # (4.3) Subtract lines
