@@ -59,13 +59,13 @@ def gauss_jordan(number_of_equations, input_equations):
     return solution
 
 
-def LU(number_of_equations, A):
+def LU(number_of_equations, input_equations):
     # n = len(A)  # Give us total of lines
 
     # (1) Extract the b vector
     b = [0 for i in range(number_of_equations)]
     for i in range(0, number_of_equations):
-        b[i] = A[i][number_of_equations]
+        b[i] = input_equations[i][number_of_equations]
 
     # (2) Fill L matrix and its diagonal with 1
     L = [[0 for i in range(number_of_equations)] for i in range(number_of_equations)]
@@ -76,7 +76,7 @@ def LU(number_of_equations, A):
     U = [[0 for i in range(0, number_of_equations)] for i in range(number_of_equations)]
     for i in range(0, number_of_equations):
         for j in range(0, number_of_equations):
-            U[i][j] = A[i][j]
+            U[i][j] = input_equations[i][j]
 
     n = len(U)
 
