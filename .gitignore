@@ -4,4 +4,3 @@
 __pycache__
 out/*
 *.pdf
-src/parse.py
