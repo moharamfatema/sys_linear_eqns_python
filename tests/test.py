@@ -1,7 +1,7 @@
 import unittest
 import numpy
-
-from src import methods
+import os
+from src import methods, parse
 
 class TestMethods(unittest.TestCase):
     
@@ -119,3 +119,19 @@ class TestMethods(unittest.TestCase):
         x = methods.gauss_seidel(a,b)
         self.assertEqual(x.shape,correct.shape)
         self.assertAlmostEqual(x.all(),correct.all(),5)
+
+class TestParse(unittest.TestCase):
+    
+    def setUp(self):
+        print(os.getcwd())
+
+    def testFromFile(self):
+        info = {
+            'no of Equations':3,
+            'method':"Gaussian-jordan",
+            'equations':['3*a + 2*b + c - 6','2*a + 3*b - 7','2*c - 4'],
+            'initial values':[1,1.1,2]
+        }
+        x = parse.fromFile("tests\\in\\gaussJordanSample.txt")
+        self.assertDictEqual(x,info)
+    
