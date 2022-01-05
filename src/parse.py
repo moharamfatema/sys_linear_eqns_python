@@ -1,5 +1,5 @@
-
-from numpy import double
+from sympy import *
+import numpy as np
 
 
 def fromFile(fileName = 'in.txt'):
@@ -11,8 +11,26 @@ def fromFile(fileName = 'in.txt'):
     for k in range(info['no of Equations']):
         info['equations'].append(f.readline().replace('\n',''))
 
-    if info['method'] == 'Gaussian-jordan':
+    if info['method'] == 'Gaussian-siedel':
         info['initial values'] = f.readline().split()
         for k in range(info['no of Equations']):
-            info['initial values'][k] = double(info['initial values'][k])
+            info['initial values'][k] = np.double(info['initial values'][k])
     return info
+
+def getCoeff(info):
+    syms = symbols('a:z')
+    syms = syms[0:info['no of Equations']]
+    eqns = sympify(info['equations'])
+    a = []
+    for i in range(info['no of Equations']):
+        a.append([])
+        for k in  range(info['no of Equations']):
+            a[i].append(eqns[i].coeff(syms[k]))
+            eqns[i] = eqns[i] - eqns[i].coeff(syms[k])*syms[k]
+    
+    a = np.asarray(a)
+    b = -1 * np.double(eqns)
+
+    aug = np.concatenate((a ,np.array([b]).T),axis=1)
+
+    return a,b,aug
