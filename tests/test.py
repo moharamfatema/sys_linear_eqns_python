@@ -5,7 +5,7 @@ import os
 from src import methods, parse
 
 class TestMethods(unittest.TestCase):
-    
+        
     def testGaussElimination(self):
         a = numpy.array([[2, 1, 4, 1], [1, 2, 3, 1.5], [4, -1 ,2, 2]])
         correct = numpy.array([1,1,-0.5])
@@ -128,15 +128,14 @@ class TestMethods(unittest.TestCase):
 
 class TestParse(unittest.TestCase):
     
-    def setUp(self):
-        print(os.getcwd())
-
     def testFromFile(self):
         info = {
             'no of Equations':3,
             'method':"Gaussian-siedel",
             'equations':['3*a + 2*b + c - 6','2*a + 3*b - 7','2*c - 4'],
-            'initial values':[1,1.1,2]
+            'initial values':[1,1.1,2],
+            'max iterations':50,
+            'epsilon':1e-5
         }
         x = parse.fromFile("tests\\in\\gaussSiedelSample.txt")
         self.assertDictEqual(x,info)
@@ -153,4 +152,4 @@ class TestParse(unittest.TestCase):
         npt.assert_array_equal(b,[6,7,4])
         npt.assert_array_equal(aug,[[3,2,1,6],[2,3,0,7],[0,0,2,4]])
         
-        
+    

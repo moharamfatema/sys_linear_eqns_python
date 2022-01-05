@@ -11,10 +11,13 @@ def fromFile(fileName = 'in.txt'):
     for k in range(info['no of Equations']):
         info['equations'].append(f.readline().replace('\n',''))
 
-    if info['method'] == 'Gaussian-siedel':
+    if info['method'] == 'Gaussian-siedel' or info['method'] == 'All':
         info['initial values'] = f.readline().split()
         for k in range(info['no of Equations']):
             info['initial values'][k] = np.double(info['initial values'][k])
+    
+    info['max iterations'] = 50
+    info['epsilon'] = 1e-5
     return info
 
 def getCoeff(info):
