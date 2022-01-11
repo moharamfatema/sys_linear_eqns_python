@@ -1,15 +1,18 @@
 # Importing NumPy Library
 import numpy as np
+import time
 
 
 def gauss_elimination(number_of_equations,input_equations):
     solution = np.zeros(number_of_equations)
     data = {}
     data['Forward Elimination'] = []
-
+    start = time.perf_counter() * 1000
     # Applying Gauss Elimination
     for i in range(number_of_equations):
         if input_equations[i][i] == 0.0:
+            data['status'] = 'Error'
+            data['exception'] = ZeroDivisionError
             raise ZeroDivisionError('Divide by zero detected!')
 
         for j in range(i + 1, number_of_equations):
@@ -18,12 +21,11 @@ def gauss_elimination(number_of_equations,input_equations):
             for k in range(number_of_equations + 1):
                 input_equations[j][k] = input_equations[j][k] - ratio * input_equations[i][k]
             
-        data['Forward Elimination'].append(np.copy( input_equations))
+            data['Forward Elimination'].append(np.copy( input_equations))
 
 
 
     # Back Substitution
-    data['Back Substitution'] = []
     solution[number_of_equations - 1] = input_equations[number_of_equations - 1][number_of_equations] / input_equations[number_of_equations - 1][number_of_equations - 1]
 
     for i in range(number_of_equations - 2, -1, -1):
@@ -33,19 +35,26 @@ def gauss_elimination(number_of_equations,input_equations):
             solution[i] = solution[i] - input_equations[i][j] * solution[j]
 
         solution[i] = solution[i] / input_equations[i][i]
-        data['Back Substitution'].append(np.copy(solution))
+    data['time'] = time.perf_counter() * 1000 - start 
     # Displaying solution
     data['solution'] = solution
+    data['status'] = 'Good'
     return data
 
 
 def gauss_jordan(number_of_equations, input_equations):
 
+
+    data = {}
+    data['Gauss Jordan Elimination'] = []
+    start = time.perf_counter() * 1000
     solution = np.zeros(number_of_equations)
 
     # Applying Gauss Jordan Elimination
     for i in range(number_of_equations):
         if input_equations[i][i] == 0.0:
+            data['status'] = 'Error'
+            data['exception'] = ZeroDivisionError
             raise ZeroDivisionError('Divide by zero detected!')
 
         for j in range(number_of_equations):
@@ -54,34 +63,41 @@ def gauss_jordan(number_of_equations, input_equations):
 
                 for k in range(number_of_equations + 1):
                     input_equations[j][k] = input_equations[j][k] - ratio * input_equations[i][k]
+                    data['Gauss Jordan Elimination'].append(np.copy(input_equations))
 
     #  Obtaining Solution
 
     for i in range(number_of_equations):
         solution[i] = input_equations[i][number_of_equations] / input_equations[i][i]
-
+    data['time'] = time.perf_counter() * 1000 - start
+    data['solution'] = solution
+    data['status'] = 'Good'
     # Displaying solution
-    return solution
+    return data
 
 
-def LU(number_of_equations, input_equations):
-    # n = len(A)  # Give us total of lines
+def lu_decomposition(number_of_equations, input_equations):
 
-    # (1) Extract the b vector
-    b = [0 for i in range(number_of_equations)]
+    data = {}
+    data['L'] = []
+    data['U'] = []
+    start = time.perf_counter() * 1000
+
+    b = [0 for _ in range(number_of_equations)]
+    L = [[0 for _ in range(number_of_equations)] for _ in range(number_of_equations)]
+    U = [[0 for _ in range(0, number_of_equations)] for _ in range(number_of_equations)]
+
     for i in range(0, number_of_equations):
+        # (1) Extract the b vector
         b[i] = input_equations[i][number_of_equations]
 
-    # (2) Fill L matrix and its diagonal with 1
-    L = [[0 for i in range(number_of_equations)] for i in range(number_of_equations)]
-    for i in range(0, number_of_equations):
+        # (2) Fill L matrix and its diagonal with 1
         L[i][i] = 1
 
-    # (3) Fill U matrix
-    U = [[0 for i in range(0, number_of_equations)] for i in range(number_of_equations)]
-    for i in range(0, number_of_equations):
+        # (3) Fill U matrix
         for j in range(0, number_of_equations):
             U[i][j] = input_equations[i][j]
+
 
     n = len(U)
 
@@ -107,15 +123,19 @@ def LU(number_of_equations, input_equations):
             L[k][i] = c  # (4.4) Store the multiplier
             for j in range(i, n):
                 U[k][j] += c * U[i][j]  # Multiply with the pivot line and subtract
-
+            data['L'].append(np.copy(L))
+            data['U'].append(np.copy(U))
+            
         # (4.5) Make the rows bellow this one zero in the current column
         for k in range(i + 1, n):
             U[k][i] = 0
+        
+        data['U'].append(np.copy(U))
 
     n = len(L)
 
     # (5) Perform substitution Ly=b
-    y = [0 for i in range(n)]
+    y = [0 for _ in range(n)]
     for i in range(0, n, 1):
         y[i] = b[i] / float(L[i][i])
         for k in range(0, i, 1):
@@ -124,29 +144,39 @@ def LU(number_of_equations, input_equations):
     n = len(U)
 
     # (6) Perform substitution Ux=y
-    x = [0 in range(n)]
+    x = [0 for _ in range(n)]
     for i in range(n - 1, -1, -1):
         x[i] = y[i] / float(U[i][i])
         for k in range(i - 1, -1, -1):
             U[i] -= x[i] * U[i][k]
 
-    return x
+    data['time'] = time.perf_counter() * 1000 - start
+    data['solution'] = np.asarray(x)
+    return data
 
 
-def gauss_seidel(A, b, tolerance=0.00001, max_iterations=50):
+def gauss_seidel(a, b, tolerance=0.00001, max_iterations=50):
+    data = {}
+    data['epsilon'] = []
+    start = time.perf_counter() * 1000
     x = np.zeros_like(b, dtype=np.double)
-
+    data['x'] = [x.copy()]
+    
     # Iterate
-    for k in range(max_iterations):
+    for _ in range(max_iterations):
 
         x_old = x.copy()
 
         # Loop over rows
-        for i in range(A.shape[0]):
-            x[i] = (b[i] - np.dot(A[i, :i], x[:i]) - np.dot(A[i, (i + 1):], x_old[(i + 1):])) / A[i, i]
+        for i in range(a.shape[0]):
+            x[i] = (b[i] - np.dot(a[i, :i], x[:i]) - np.dot(a[i, (i + 1):], x_old[(i + 1):])) / a[i, i]
+        data['x'].append(x.copy())
 
         # Stop condition
-        if np.linalg.norm(x - x_old, ord=np.inf) / np.linalg.norm(x, ord=np.inf) < tolerance:
+        epsilon = np.linalg.norm(x - x_old, ord=np.inf) / np.linalg.norm(x, ord=np.inf)
+        data['epsilon'].append(epsilon)
+        if epsilon < tolerance:
             break
-
-    return x
+    data['solution'] = x
+    data['time'] = time.perf_counter() * 1000 - start
+    return data

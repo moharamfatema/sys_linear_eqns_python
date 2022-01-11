@@ -1,33 +1,35 @@
-from sympy import *
+import sympy as sp
 import numpy as np
+NO_EQNS = 'no of Equations'
+INIT = 'initial values'
 
 
-def fromFile(fileName = 'in.txt'):
+def from_file(file_name = 'in.txt'):
     info = {}
-    f = open(fileName,'r')
-    info['no of Equations'] = int(f.readline())
+    f = open(file_name,'r')
+    info[NO_EQNS] = int(f.readline())
     info['method'] = f.readline().replace('\n','')
     info['equations'] = []
-    for k in range(info['no of Equations']):
+    for k in range(info[NO_EQNS]):
         info['equations'].append(f.readline().replace('\n',''))
 
     if info['method'] == 'Gaussian-siedel' or info['method'] == 'All':
-        info['initial values'] = f.readline().split()
-        for k in range(info['no of Equations']):
-            info['initial values'][k] = np.double(info['initial values'][k])
+        info[INIT] = f.readline().split()
+        for k in range(info[NO_EQNS]):
+            info[INIT][k] = np.double(info[INIT][k])
     
     info['max iterations'] = 50
     info['epsilon'] = 1e-5
     return info
 
-def getCoeff(info):
-    syms = symbols('a:z')
-    syms = syms[0:info['no of Equations']]
-    eqns = sympify(info['equations'])
+def get_coeff(info):
+    syms = sp.symbols('a:z')
+    syms = syms[0:info[NO_EQNS]]
+    eqns = sp.sympify(info['equations'])
     a = []
-    for i in range(info['no of Equations']):
+    for i in range(info[NO_EQNS]):
         a.append([])
-        for k in  range(info['no of Equations']):
+        for k in  range(info[NO_EQNS]):
             a[i].append(eqns[i].coeff(syms[k]))
             eqns[i] = eqns[i] - eqns[i].coeff(syms[k])*syms[k]
     
