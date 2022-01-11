@@ -9,7 +9,7 @@ class TestMethods(unittest.TestCase):
     def testGaussElimination(self):
         a = numpy.array([[2, 1, 4, 1], [1, 2, 3, 1.5], [4, -1 ,2, 2]])
         correct = numpy.array([1,1,-0.5])
-        x = methods.gauss_elimination(number_of_equations=3,input_equations=a)
+        x = methods.gauss_elimination(number_of_equations=3,input_equations=a).get('solution')
         self.assertEqual(x.shape,correct.shape)
         npt.assert_array_equal(x ,correct )
 
@@ -20,7 +20,7 @@ class TestMethods(unittest.TestCase):
             [8,18,-2,3,40]
             ])
         correct = numpy.array([-13.5,8+2/3,7,2])
-        x = methods.gauss_elimination(number_of_equations=4,input_equations=a)
+        x = methods.gauss_elimination(number_of_equations=4,input_equations=a).get('solution')
         self.assertEqual(x.shape,correct.shape)
         npt.assert_array_equal(x ,correct )
 
@@ -30,7 +30,7 @@ class TestMethods(unittest.TestCase):
 
         a = numpy.array([[1,2,5,-1,7,1],[0,-8,5,0,10,5],[0,-4,5,6,1,3],[0,6,25,99,2,4],[0,0,33,2,15,2]])
         correct = numpy.array([1.939052136,-0.5869276124,1737/31207.0,3863/62414.0,82/31207.0])
-        x = methods.gauss_elimination(number_of_equations=5,input_equations=a)
+        x = methods.gauss_elimination(number_of_equations=5,input_equations=a).get('solution')
         self.assertEqual(x.shape,correct.shape)
         npt.assert_array_almost_equal(x ,correct ,5)
 
@@ -38,19 +38,19 @@ class TestMethods(unittest.TestCase):
     def testLU(self):
         a = numpy.array([[2, 1, 4, 1], [1, 2, 3, 1.5], [4, -1 ,2, 2]])
         correct = numpy.array([1,1,-0.5])
-        x = methods.LU(number_of_equations=3,input_equations=a)
+        x = methods.LU(number_of_equations=3,input_equations=a).get('solution')
         self.assertEqual(x.shape,correct.shape)
         npt.assert_array_almost_equal(x ,correct ,5)
 
         a = numpy.array([[4,6,2,-2,8],[2,0,5,-2,4],[-4,-3,-5,4,1],[8,18,-2,3,40]])
         correct = numpy.array([-13.5,8+2/3,7,2])
-        x = methods.LU(number_of_equations=4,input_equations=a)
+        x = methods.LU(number_of_equations=4,input_equations=a).get('solution')
         self.assertEqual(x.shape,correct.shape)
         npt.assert_array_almost_equal(x ,correct ,5)
 
         a = numpy.array([[1,2,5,-1,7,1],[0,-8,5,0,10,5],[0,-4,5,6,1,3],[0,6,25,99,2,4],[0,0,33,2,15,2]])
         correct = numpy.array([1.939052136,-0.5869276124,1737/31207.0,3863/62414.0,82/31207.0])
-        x = methods.LU(number_of_equations=5,input_equations=a)
+        x = methods.LU(number_of_equations=5,input_equations=a).get('solution')
         self.assertEqual(x.shape,correct.shape)
         npt.assert_array_almost_equal(x ,correct ,5)
 
@@ -61,7 +61,7 @@ class TestMethods(unittest.TestCase):
         temp = correct[0]
         correct[0] = correct[4]
         correct[4] = temp
-        x = methods.LU(number_of_equations=5,input_equations=a)
+        x = methods.LU(number_of_equations=5,input_equations=a).get('solution')
         self.assertEqual(x.shape,correct.shape)
         npt.assert_array_almost_equal(x ,correct ,5)
 

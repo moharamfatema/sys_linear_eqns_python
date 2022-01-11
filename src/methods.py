@@ -4,7 +4,8 @@ import numpy as np
 
 def gauss_elimination(number_of_equations,input_equations):
     solution = np.zeros(number_of_equations)
-
+    data = {}
+    data['Forward Elimination'] = []
 
     # Applying Gauss Elimination
     for i in range(number_of_equations):
@@ -16,10 +17,13 @@ def gauss_elimination(number_of_equations,input_equations):
 
             for k in range(number_of_equations + 1):
                 input_equations[j][k] = input_equations[j][k] - ratio * input_equations[i][k]
+            
+        data['Forward Elimination'].append(np.copy( input_equations))
 
 
 
     # Back Substitution
+    data['Back Substitution'] = []
     solution[number_of_equations - 1] = input_equations[number_of_equations - 1][number_of_equations] / input_equations[number_of_equations - 1][number_of_equations - 1]
 
     for i in range(number_of_equations - 2, -1, -1):
@@ -29,9 +33,10 @@ def gauss_elimination(number_of_equations,input_equations):
             solution[i] = solution[i] - input_equations[i][j] * solution[j]
 
         solution[i] = solution[i] / input_equations[i][i]
-
+        data['Back Substitution'].append(np.copy(solution))
     # Displaying solution
-    return solution
+    data['solution'] = solution
+    return data
 
 
 def gauss_jordan(number_of_equations, input_equations):
