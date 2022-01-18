@@ -1,10 +1,13 @@
 import sympy as sp
 import numpy as np
+
+from src.methods import gauss_elimination, gauss_jordan, gauss_seidel, lu_decomposition
 NO_EQNS = 'no of Equations'
 INIT = 'initial values'
+AUG = 'Augmented matrix'
 
 
-def from_file(file_name = 'in.txt'):
+def dict_from_file(file_name = 'in.txt'):
     info = {}
     f = open(file_name,'r')
     info[NO_EQNS] = int(f.readline())
@@ -20,6 +23,7 @@ def from_file(file_name = 'in.txt'):
     
     info['max iterations'] = 50
     info['epsilon'] = 1e-5
+    info['Coeff matrix'],info['B matrix'],info[AUG] = get_coeff(info)
     return info
 
 def get_coeff(info):
@@ -39,3 +43,35 @@ def get_coeff(info):
     aug = np.concatenate((a ,np.array([b]).T),axis=1)
 
     return a,b,aug
+
+def call_from_dict(info):
+    method = info.get('mathod')
+    if (method == 'Gaussian elimination'):
+        return gauss_elimination(
+            number_of_equations=info.get(NO_EQNS),
+            input_equations=info.get(AUG)
+        )
+    elif (method == 'Gaussian Jordan'):
+        return gauss_jordan(
+            number_of_equations=info.get(NO_EQNS),
+            input_equations=info.get(AUG)
+        )
+    elif (method == 'LU decomposition'):
+        return lu_decomposition(
+            number_of_equations=info.get(NO_EQNS),
+            input_equations=info.get(AUG)
+        )
+    elif (method == 'Gaussian siedel'):
+        return  gauss_seidel(
+            a = info.get('Coeff matrix'),
+            b = info.get('B matrix'),
+            initial_guesses = info.get(INIT),
+            max_iterations = info.get('max iterations'),
+            tolerance = info.get('epsilon')
+        )
+    else:
+        raise NotImplementedError
+
+def call_from_file(file_name = 'in.txt'):
+    info = dict_from_file(file_name)
+    return call_from_dict(info)

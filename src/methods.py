@@ -46,7 +46,7 @@ def gauss_jordan(number_of_equations, input_equations):
 
 
     data = {}
-    data['Gauss Jordan Elimination'] = []
+    data['Gaussian Jordan Elimination'] = []
     start = time.perf_counter() * 1000
     solution = np.zeros(number_of_equations)
 
@@ -159,7 +159,7 @@ def gauss_seidel(a, b,initial_guesses, tolerance=0.00001, max_iterations=50):
     data = {}
     data['epsilon'] = []
     start = time.perf_counter() * 1000
-    x =  initial_guesses
+    x =  initial_guesses.copy()
     data['x'] = [x.copy()]
     
     # Iterate
