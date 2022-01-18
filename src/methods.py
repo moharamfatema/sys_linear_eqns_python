@@ -144,7 +144,7 @@ def lu_decomposition(number_of_equations, input_equations):
     n = len(U)
 
     # (6) Perform substitution Ux=y
-    x = [0 for i in range(n)]
+    x = [0 for _ in range(n)]
     for i in range(n - 1, -1, -1):
         x[i] = y[i] / float(U[i][i])
         for k in range(i - 1, -1, -1):
@@ -155,11 +155,11 @@ def lu_decomposition(number_of_equations, input_equations):
     return data
 
 
-def gauss_seidel(a, b, tolerance=0.00001, max_iterations=50,initial_guesses=[0 for _ in range(number_of_equations)]):
+def gauss_seidel(a, b,initial_guesses, tolerance=0.00001, max_iterations=50):
     data = {}
     data['epsilon'] = []
     start = time.perf_counter() * 1000
-    x = np.zeros_like(b, dtype=np.double)
+    x =  initial_guesses
     data['x'] = [x.copy()]
     
     # Iterate
