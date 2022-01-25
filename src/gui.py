@@ -13,6 +13,7 @@ PADY_BOXES = (0, 5)
 BUTTON_PAD = 3
 BUTTON_WIDTH = 5
 
+
 def run():
     # Configuring window
     root = ThemedTk(theme="breeze")
@@ -32,25 +33,25 @@ def run():
     numofeqn_var = tk.IntVar()
     numofeqn_var.set(3)
     numofeqn_spin = ttk.Spinbox(input_frame, textvariable=numofeqn_var, width=SPIN_WIDTH, from_=0, to=TO_X)
-    confirm_btn = ttk.Button(input_frame, text="Confirm", width=BUTTON_WIDTH + 2, command=lambda *args: gc.confirm())
-    reset_btn = ttk.Button(input_frame, text="Reset", width=BUTTON_WIDTH, command=lambda *args: gc.reset())
-    enter_btn = ttk.Button(input_frame, text="Enter", width=BUTTON_WIDTH, command=lambda *args: gc.enter_eqn())
+    confirm_btn = ttk.Button(input_frame, text="Confirm", width=BUTTON_WIDTH + 2, command=lambda *args: gc.confirm(numofeqn_var.get(), reset_btn, enter_btn, exp_entry))
+    reset_btn = ttk.Button(input_frame, text="Reset", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.reset(output_txt, reset_btn, enter_btn, exp_entry))
+    enter_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_eqn(output_txt, exp_entry.get(), numofeqn_var.get(), enter_btn, exp_entry))
 
 
     enter_label= ttk.Label(input_frame, text="Enter equation", width=20)
     entry_string = tk.StringVar()
-    exp_entry = ttk.Entry(input_frame, textvariable=entry_string, width=40)
+    exp_entry = ttk.Entry(input_frame, textvariable=entry_string, width=40, state="disabled")
     entry_string.trace_add("write", lambda *args: gc.string_entered(exp_entry))
-    file_btn = ttk.Button(input_frame, text="Choose from a file", command=lambda:gc.choose_file(exp_entry, output_txt, vars, sim_btn))
+    file_btn = ttk.Button(input_frame, text="Choose from a file", command=lambda:gc.choose_file(exp_entry, output_txt))
 
     calc_btn = ttk.Button(input_frame, text="Calculate", command=lambda: gc.calc(vars, output_txt))
 
     methods = [
         "All",
-        "Gaussian Elimination",
-        "LU Decomposition",
-        "Gaussian-Jordan",
-        "Gauss-Seidel"
+        "Gaussian elimination",
+        "LU decomposition",
+        "Gaussian Jordan",
+        "Gaussian siedel"
     ]
     method = tk.StringVar()
     method.set(methods[0])

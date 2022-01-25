@@ -26,6 +26,9 @@ def dict_from_file(file_name = 'in.txt'):
     info['Coeff matrix'],info['B matrix'],info[AUG] = get_coeff(info)
     return info
 
+def test_expression(equation):
+    return sp.sympify(equation)
+
 def get_coeff(info):
     syms = sp.symbols('a:z')
     syms = syms[0:info[NO_EQNS]]
