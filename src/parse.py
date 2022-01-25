@@ -27,7 +27,7 @@ def dict_from_file(file_name = 'in.txt'):
     return info
 
 def test_expression(equation):
-    return sp.sympify(equation)
+    pass
 
 def get_coeff(info):
     syms = sp.symbols('a:z')

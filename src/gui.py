@@ -1,3 +1,4 @@
+from cmath import exp
 from tkinter import Label, ttk 
 from ttkthemes import ThemedTk
 import tkinter as tk
@@ -45,7 +46,7 @@ def run():
     file_btn = ttk.Button(input_frame, text="Choose from a file", command=lambda:gc.choose_file(exp_entry, output_txt))
 
     calc_btn = ttk.Button(input_frame, text="Calculate", command=lambda: gc.calc(vars, output_txt))
-
+    gc.CreateToolTip(exp_entry, text = 'Make sure to confirm number of equations first!')
     methods = [
         "All",
         "Gaussian elimination",

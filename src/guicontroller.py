@@ -16,7 +16,44 @@ from tkinter import messagebox
 
 EQUATIONS = []
 
+class ToolTip(object):
 
+    def __init__(self, widget):
+        self.widget = widget
+        self.tipwindow = None
+        self.id = None
+        self.x = self.y = 0
+
+    def showtip(self, text):
+        "Display text in tooltip window"
+        self.text = text
+        if self.tipwindow or not self.text:
+            return
+        x, y, cx, cy = self.widget.bbox("insert")
+        x = x + self.widget.winfo_rootx() + 57
+        y = y + cy + self.widget.winfo_rooty() +27
+        self.tipwindow = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(1)
+        tw.wm_geometry("+%d+%d" % (x, y))
+        label = tk.Label(tw, text=self.text, justify=tk.LEFT,
+                      background="#ffffe0", relief=tk.SOLID, borderwidth=1,
+                      font=("tahoma", "8", "normal"))
+        label.pack(ipadx=1)
+
+    def hidetip(self):
+        tw = self.tipwindow
+        self.tipwindow = None
+        if tw:
+            tw.destroy()
+
+def CreateToolTip(widget, text):
+    toolTip = ToolTip(widget)
+    def enter(event):
+        toolTip.showtip(text)
+    def leave(event):
+        toolTip.hidetip()
+    widget.bind('<Enter>', enter)
+    widget.bind('<Leave>', leave)
 
 def string_entered(exp_entry):
     try:
@@ -100,6 +137,7 @@ def enter_eqn(out, equation, numofeqns, enter_btn, exp_entry):
         enter_btn.configure(state="disabled")
         exp_entry.configure(state="disabled")
 
+
 def reset(out, reset_btn, enter_btn, exp_entry):
     global NUMBER_OF_EQUATIONS
     global EQUATIONS
@@ -111,6 +149,54 @@ def reset(out, reset_btn, enter_btn, exp_entry):
     exp_entry.delete(0, tk.END)
     exp_entry.configure(state="disabled")
 
+
+
+def button_click(exp_entry, symbol):
+    current = exp_entry.get()
+    exp_entry.insert(exp_entry.index(tk.INSERT), symbol)
+    exp_entry.focus()
+    if "()" in symbol:
+        exp_entry.icursor(exp_entry.index(tk.INSERT) - 1)
+
+def x(exp_entry):
+    button_click(exp_entry, "x")
+
+def plus(exp_entry):
+    button_click(exp_entry, "+")
+
+def minus(exp_entry):
+    button_click(exp_entry, "-")
+
+def mult(exp_entry):
+    button_click(exp_entry, "*")
+
+def div(exp_entry):
+    button_click(exp_entry, "/")
+
+def pwr(exp_entry):
+    button_click(exp_entry, "^")
+
+def sqrt(exp_entry):
+    button_click(exp_entry, "sqrt()")
+
+def leftbracket(exp_entry):
+    button_click(exp_entry, "()")
+
+def rightbracket(exp_entry):
+    button_click(exp_entry, ")")
+
+def cos(exp_entry):
+    button_click(exp_entry, "cos()")
+
+def sin(exp_entry):
+    button_click(exp_entry, "sin()")
+
+def e(exp_entry):
+    button_click(exp_entry, "E")
+
+def clear(exp_entry):
+    exp_entry.delete(0, tk.END)
+    exp_entry.focus()
 
 def calc ():
     pass 
