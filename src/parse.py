@@ -1,7 +1,7 @@
 import sympy as sp
 import numpy as np
 
-from src.methods import gauss_elimination, gauss_jordan, gauss_seidel, lu_decomposition
+from methods import gauss_elimination, gauss_jordan, gauss_seidel, lu_decomposition
 NO_EQNS = 'no of Equations'
 INIT = 'initial values'
 AUG = 'Augmented matrix'
@@ -45,7 +45,7 @@ def get_coeff(info):
     return a,b,aug
 
 def call_from_dict(info):
-    method = info.get('mathod')
+    method = info.get('method')
     if (method == 'Gaussian elimination'):
         return gauss_elimination(
             number_of_equations=info.get(NO_EQNS),
