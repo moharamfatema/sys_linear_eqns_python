@@ -67,11 +67,11 @@ def call_from_dict(info):
         )
     elif (method == 'Gauss siedel'):
         return  gauss_seidel(
-            a = info.get('Coeff matrix'),
-            b = info.get('B matrix'),
+            a,
+            b,
             initial_guesses = info.get(INIT),
-            max_iterations = info.get('max iterations'),
-            tolerance = info.get('epsilon')
+            tolerance = info.get('epsilon'),
+            max_iterations = info.get('max iterations')            
         )
     elif method == "All":
         results = {}
@@ -88,9 +88,10 @@ def call_from_dict(info):
             input_equations=aug
         )
         results['Gauss siedel'] = gauss_seidel(
+            a, b,
             initial_guesses = info.get(INIT),
-            max_iterations = info.get('max iterations'),
-            tolerance = info.get('epsilon')
+            tolerance = info.get('epsilon'),
+            max_iterations = info.get('max iterations')            
         )
         return results
     else: 

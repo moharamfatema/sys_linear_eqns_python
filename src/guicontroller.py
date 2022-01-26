@@ -265,20 +265,21 @@ def calc (out, method, precision, maxiter):
 
 
 def out_sol(out, dict):
-    try:
+    try: 
         results = call_from_dict(dict)
         if dict['method'] == "All" :
             for key in results:
                 if key == "Gauss siedel":
-                    out_gauss_seidel(out, key)
+                    out_gauss_seidel(out, results[key])
                 else:
                     out_methods(out, results[key], key)
-        elif dict['method'] == "Gauss seidel":
+        elif dict['method'] == "Gauss siedel":
             out_gauss_seidel(out, results)
         else:
             out_methods(out, results, dict['method'])
     except Exception as e:
         update_output(out, e, color="red", append=True)
+
 
 def out_methods(out, results, method):
     update_output(out, method.upper() + "\n", append=True)
@@ -287,13 +288,15 @@ def out_methods(out, results, method):
     update_output(out, "Time elapsed: " + str(results['time']) + "\n", append=True)
 
 def out_gauss_seidel(out, results): 
-    update_output(out, "GAUSS SEIDEL\n", append=True)
+    print("here!")
+    update_output(out, "GAUSS SIEDEL\n", append=True)
     update_output(out, "Solution: \n", append=True)
     print_sol(out, results['solution'])
     update_output(out, "Time elapsed: " + str(results['time']) + "\n", append=True)
-    update_output(out, "Precision: " + str(results['epsilon']) + "\n", append=True)
+    update_output(out, "Precision: \n", append=True)
+    print_sol(out, results['epsilon'])
     update_output(out, "Iterations: " + str(results['iterations']) + "\n", append=True)
     
 def print_sol(out, solution):
     for i in range(len(solution)):
-        update_output(out, 'X' + str(i + 1) + "= " + str(solution[i]) + "\n", append=True)
+        update_output(out, '\tX' + str(i + 1) + "= " + str(solution[i]) + "\n", append=True)

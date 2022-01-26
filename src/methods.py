@@ -46,7 +46,7 @@ def gauss_jordan(number_of_equations, input_equations):
 
 
     data = {}
-    data['Gaussian Jordan Elimination'] = []
+    data['Gaussian Jordan'] = []
     start = time.perf_counter() * 1000
     solution = np.zeros(number_of_equations)
 
@@ -63,7 +63,7 @@ def gauss_jordan(number_of_equations, input_equations):
 
                 for k in range(number_of_equations + 1):
                     input_equations[j][k] = input_equations[j][k] - ratio * input_equations[i][k]
-                    data['Gauss Jordan Elimination'].append(np.copy(input_equations))
+                    data['Gaussian Jordan'].append(np.copy(input_equations))
 
     #  Obtaining Solution
 
@@ -86,6 +86,9 @@ def lu_decomposition(number_of_equations, input_equations):
     b = [0 for _ in range(number_of_equations)]
     L = [[0 for _ in range(number_of_equations)] for _ in range(number_of_equations)]
     U = [[0 for _ in range(0, number_of_equations)] for _ in range(number_of_equations)]
+    
+    L = np.array(L)
+    U = np.array(U)
 
     for i in range(0, number_of_equations):
         # (1) Extract the b vector
@@ -145,6 +148,7 @@ def lu_decomposition(number_of_equations, input_equations):
 
     # (6) Perform substitution Ux=y
     x = [0 for _ in range(n)]
+    x = np.array(x)
     for i in range(n - 1, -1, -1):
         x[i] = y[i] / float(U[i][i])
         for k in range(i - 1, -1, -1):
@@ -161,7 +165,7 @@ def gauss_seidel(a, b,initial_guesses, tolerance=0.00001, max_iterations=50):
     start = time.perf_counter() * 1000
     x =  initial_guesses.copy()
     data['x'] = [x.copy()]
-    
+    x = np.array(x)
     # Iterate
     data['iterations'] = 0
     for _ in range(max_iterations):
@@ -171,13 +175,24 @@ def gauss_seidel(a, b,initial_guesses, tolerance=0.00001, max_iterations=50):
 
         # Loop over rows
         for i in range(a.shape[0]):
-            x[i] = (b[i] - np.dot(a[i, :i], x[:i]) - np.dot(a[i, (i + 1):], x_old[(i + 1):])) / a[i, i]
+            first = b[i] or 0
+            second = np.dot(a[i, :i], x[:i]) or 0
+            third = np.dot(a[i, (i + 1):], x_old[(i + 1):]) or 0
+            # print("b[i]= " + str(b[i]))
+            # print("\nnp.dot(a[i, :i], x[:i])= " + str(np.dot(a[i, :i], x[:i])))
+            # print("np.dot(a[i, (i + 1):], x_old[(i + 1):])= " + str(np.dot(a[i, (i + 1):], x_old[(i + 1):])))
+            x[i] = (first - second - third) / a[i, i]
         data['x'].append(x.copy())
 
         # Stop condition
-        epsilon = np.linalg.norm(x - x_old, ord=np.inf) / np.linalg.norm(x, ord=np.inf)
-        data['epsilon'].append(epsilon)
-        if epsilon < tolerance:
+        #epsilon = np.linalg.norm(x - x_old, ord=np.inf) / np.linalg.norm(x, ord=np.inf)
+        epsilon = (x - x_old) / x 
+        data['epsilon'] = epsilon
+        flag = 0
+        for value in epsilon:
+            if value > tolerance:
+                flag = 1
+        if not flag:
             break
     data['solution'] = x
     data['time'] = time.perf_counter() * 1000 - start
