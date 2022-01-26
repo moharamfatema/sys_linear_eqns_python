@@ -128,10 +128,11 @@ def update_output(output, text, color="black", append=False):
 def confirm(out,numofeqns, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn):
     global NUMBER_OF_EQUATIONS
     global EQUATIONS
-    NUMBER_OF_EQUATIONS = numofeqns
     global COUNTER
-    COUNTER = numofeqns
     reset(out,reset_btn,enter_btn,exp_entry,init_entry,enter_init_btn)
+    NUMBER_OF_EQUATIONS = numofeqns
+    COUNTER = numofeqns
+
     if numofeqns > 0:
         reset_btn.configure(state="enable")
         enter_btn.configure(state="enabled")
@@ -148,6 +149,7 @@ def enter_eqn(out, equation, enter_btn, exp_entry, init_entry, enter_init_btn):
     global EQUATIONS
     global COUNTER
     global NUMBER_OF_EQUATIONS
+    print(COUNTER)
     if equation != '' and COUNTER > 0:
         try:
             parse.test_expression(equation)
