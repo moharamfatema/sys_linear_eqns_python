@@ -51,7 +51,7 @@ def run():
     enter_init_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_init_vals(output_txt, init_entry, enter_init_btn))
     gc.CreateToolTip(init_entry, text = 'Make sure to enter all equations first!')
 
-    confirm_btn = ttk.Button(input_frame, text="Confirm", width=BUTTON_WIDTH + 2, command=lambda *args: gc.confirm(numofeqn_var.get(), reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
+    confirm_btn = ttk.Button(input_frame, text="Confirm", width=BUTTON_WIDTH + 2, command=lambda *args: gc.confirm(output_txt, numofeqn_var.get(), reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
     reset_btn = ttk.Button(input_frame, text="Reset", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.reset(output_txt, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
     enter_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_eqn(output_txt, exp_entry.get(), enter_btn, exp_entry, init_entry, enter_init_btn))
 

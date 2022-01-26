@@ -9,17 +9,17 @@ AUG = 'Augmented matrix'
 
 def dict_from_file(file_name = 'in.txt'):
     info = {}
-    f = open(file_name,'r')
-    info[NO_EQNS] = int(f.readline())
-    info['method'] = f.readline().replace('\n','')
-    info['equations'] = []
-    for k in range(info[NO_EQNS]):
-        info['equations'].append(f.readline().replace('\n',''))
-
-    if info['method'] == 'Gauss siedel' or info['method'] == 'All':
-        info[INIT] = f.readline().split()
+    with open(file_name) as f:
+        info[NO_EQNS] = int(f.readline())
+        info['method'] = f.readline().replace('\n','')
+        info['equations'] = []
         for k in range(info[NO_EQNS]):
-            info[INIT][k] = np.double(info[INIT][k])
+            info['equations'].append(f.readline().replace('\n',''))
+
+        if info['method'] == 'Gauss siedel' or info['method'] == 'All':
+            info[INIT] = f.readline().split()
+            for k in range(info[NO_EQNS]):
+                info[INIT][k] = np.double(info[INIT][k])
     
     info['max iterations'] = 50
     info['epsilon'] = 1e-5

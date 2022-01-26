@@ -101,6 +101,7 @@ def method_change(all_widgets, method_name, methods_list, out, reset_btn, enter_
 
 
 def choose_file(out):
+    update_output(out, "")
     filename = filedialog.askopenfilename(initialdir="", title="Choose a file", filetypes=(("Text files", "*.txt"), ("JSON files", "*.json"), ("All files", "*.*")))
     if filename.endswith('.txt'):
         try:
@@ -121,12 +122,13 @@ def update_output(output, text, color="black", append=False):
         output.insert('1.0', text)
     output.configure(state='disabled')
 
-def confirm(numofeqns, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn):
+def confirm(out,numofeqns, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn):
     global NUMBER_OF_EQUATIONS
     global EQUATIONS
     NUMBER_OF_EQUATIONS = numofeqns
     global COUNTER
     COUNTER = numofeqns
+    reset(out,reset_btn,enter_btn,exp_entry,init_entry,enter_init_btn)
     if numofeqns > 0:
         reset_btn.configure(state="enable")
         enter_btn.configure(state="enabled")
@@ -294,4 +296,4 @@ def out_gauss_seidel(out, results):
     
 def print_sol(out, solution):
     for i in range(len(solution)):
-        update_output(out, 'X' + str(i) + "= " + str(solution[i]) + "\n", append=True)
+        update_output(out, 'X' + str(i + 1) + "= " + str(solution[i]) + "\n", append=True)
