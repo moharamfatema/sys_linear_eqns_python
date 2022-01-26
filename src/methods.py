@@ -163,8 +163,9 @@ def gauss_seidel(a, b,initial_guesses, tolerance=0.00001, max_iterations=50):
     data['x'] = [x.copy()]
     
     # Iterate
+    data['iterations'] = 0
     for _ in range(max_iterations):
-
+        data['iterations'] += 1
        #should the initial guesses be here?
         x_old = x.copy()
 

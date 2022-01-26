@@ -40,20 +40,20 @@ def run():
     entry_string = tk.StringVar()
     exp_entry = ttk.Entry(input_frame, textvariable=entry_string, width=40, state="disabled")
     entry_string.trace_add("write", lambda *args: gc.string_entered(exp_entry))
-    file_btn = ttk.Button(input_frame, text="Choose from a file", command=lambda:gc.choose_file(exp_entry, output_txt))
+    file_btn = ttk.Button(input_frame, text="Choose from a file", command=lambda:gc.choose_file(output_txt))
 
-    calc_btn = ttk.Button(input_frame, text="Calculate", command=lambda: gc.calc(vars, output_txt))
+    calc_btn = ttk.Button(input_frame, text="Calculate", command=lambda: gc.calc(output_txt, method.get(), precision_var.get(), maxiter_var.get()))
     gc.CreateToolTip(exp_entry, text = 'Make sure to confirm number of equations first!')
 
     init_label= ttk.Label(input_frame, text="Initial values")
     init_var = tk.DoubleVar()
     init_entry = ttk.Entry(input_frame, textvariable=init_var, state="disabled")
-    enter_init_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_init_vals(output_txt, numofeqn_var.get(), init_entry, enter_init_btn))
+    enter_init_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_init_vals(output_txt, init_entry, enter_init_btn))
     gc.CreateToolTip(init_entry, text = 'Make sure to enter all equations first!')
 
     confirm_btn = ttk.Button(input_frame, text="Confirm", width=BUTTON_WIDTH + 2, command=lambda *args: gc.confirm(numofeqn_var.get(), reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
     reset_btn = ttk.Button(input_frame, text="Reset", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.reset(output_txt, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
-    enter_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_eqn(output_txt, exp_entry.get(), numofeqn_var.get(), enter_btn, exp_entry, init_entry, enter_init_btn))
+    enter_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_eqn(output_txt, exp_entry.get(), enter_btn, exp_entry, init_entry, enter_init_btn))
 
 
     methods = [

@@ -1,6 +1,7 @@
 import json
 from operator import eq
 from turtle import color
+from unittest import result
 from matplotlib.image import NonUniformImage
 import pandas as pd
 import numpy as np
@@ -14,11 +15,12 @@ import tkinter as tk
 from tkinter import E, filedialog
 from tkinter import messagebox
 
-from parse import INIT
+from parse import INIT, NO_EQNS, call_from_dict
 
 
 EQUATIONS = []
 INIT_VALS = []
+NUMBER_OF_EQUATIONS = 0
 
 class ToolTip(object):
 
@@ -98,12 +100,13 @@ def method_change(all_widgets, method_name, methods_list, out, reset_btn, enter_
     reset(out, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn)
 
 
-def choose_file(exp_entry, out):
+def choose_file(out):
     filename = filedialog.askopenfilename(initialdir="", title="Choose a file", filetypes=(("Text files", "*.txt"), ("JSON files", "*.json"), ("All files", "*.*")))
     if filename.endswith('.txt'):
         try:
             dict = parse.dict_from_file(filename)
-            calc(input_list=None, out=out, vars=dict, filename=filename)
+            out_sol(out, dict)
+        
         except FileNotFoundError as e:
             update_output(out, e, color="red")
     else:
@@ -122,6 +125,8 @@ def confirm(numofeqns, reset_btn, enter_btn, exp_entry, init_entry, enter_init_b
     global NUMBER_OF_EQUATIONS
     global EQUATIONS
     NUMBER_OF_EQUATIONS = numofeqns
+    global COUNTER
+    COUNTER = numofeqns
     if numofeqns > 0:
         reset_btn.configure(state="enable")
         enter_btn.configure(state="enabled")
@@ -134,45 +139,49 @@ def confirm(numofeqns, reset_btn, enter_btn, exp_entry, init_entry, enter_init_b
         enter_init_btn.configure(state="disabled")
 
 
-def enter_eqn(out, equation, numofeqns, enter_btn, exp_entry, init_entry, enter_init_btn):
-    global NUMBER_OF_EQUATIONS
+def enter_eqn(out, equation, enter_btn, exp_entry, init_entry, enter_init_btn):
     global EQUATIONS
-    if equation != '' and NUMBER_OF_EQUATIONS > 0:
+    global COUNTER
+    global NUMBER_OF_EQUATIONS
+    if equation != '' and COUNTER > 0:
         try:
             parse.test_expression(equation)
             EQUATIONS.append(equation)
-            NUMBER_OF_EQUATIONS -= 1
-            update_output(out, "Equation #" + str(numofeqns - NUMBER_OF_EQUATIONS) + ": " + equation + "\n", append=True)
+            COUNTER -= 1
+            update_output(out, "Equation #" + str(NUMBER_OF_EQUATIONS - COUNTER) + ": " + equation + "\n", append=True)
         except Exception as e:
             update_output(out, e + "\n", color="red", append=True)
 
-    if NUMBER_OF_EQUATIONS == 0:
-        NUMBER_OF_EQUATIONS = numofeqns
+    if COUNTER == 0:
+        COUNTER = NUMBER_OF_EQUATIONS
         enter_btn.configure(state="disabled")
         exp_entry.configure(state="disabled")
         init_entry.configure(state="enabled")
         enter_init_btn.configure(state="enabled") 
 
-def enter_init_vals(out, numofeqns, init_entry, enter_init_btn):
+def enter_init_vals(out, init_entry, enter_init_btn):
     global INIT_VALS
+    global COUNTER
     global NUMBER_OF_EQUATIONS
-    if NUMBER_OF_EQUATIONS > 0:
+    if COUNTER > 0:
         try: 
             init_val = float(init_entry.get())
-            NUMBER_OF_EQUATIONS -= 1
+            COUNTER -= 1
             INIT_VALS.append(init_val)
-            update_output(out, "X" + str(numofeqns - NUMBER_OF_EQUATIONS) + "= " + str(init_val) + "\n", append=True)
+            update_output(out, "X" + str(NUMBER_OF_EQUATIONS - COUNTER) + "= " + str(init_val) + "\n", append=True)
         except: 
             update_output(out, "Enter a valid initial value!\n", color="red", append=True)
-    if NUMBER_OF_EQUATIONS == 0:
+    if COUNTER == 0:
         init_entry.configure(state="disabled")
         enter_init_btn.configure(state="disabled") 
 
 def reset(out, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn):
-    global NUMBER_OF_EQUATIONS
     global EQUATIONS
-    NUMBER_OF_EQUATIONS = 0
+    global COUNTER
+    global INIT_VALS
+    COUNTER = 0
     EQUATIONS = []
+    INIT_VALS = []
     update_output(out, "")
     reset_btn.configure(state="disabled")
     enter_btn.configure(state="disabled")
@@ -230,5 +239,59 @@ def clear(exp_entry):
     exp_entry.delete(0, tk.END)
     exp_entry.focus()
 
-def calc (method, numofeqns, precision, maxiter):
-    pass
+def calc (out, method, precision, maxiter):
+    global NUMBER_OF_EQUATIONS
+    if NUMBER_OF_EQUATIONS == 0:
+        update_output(out, "Please confirm number of equations and enter the equations\n", color="red", append=True)
+        return
+    if len(EQUATIONS) != NUMBER_OF_EQUATIONS:
+        update_output(out, "Please enter all equations first!\n", color="red", append=True)
+        return
+    if method == "All" or method == "Gauss seidel":
+        if len(INIT_VALS) != NUMBER_OF_EQUATIONS:
+            update_output(out, "Please enter all inital values first!\n", color="red", append=True)
+            return
+    info = {
+        'method': method,
+        NO_EQNS: NUMBER_OF_EQUATIONS,
+        'equations':EQUATIONS,
+        INIT: INIT_VALS,
+        'max iterations': maxiter,
+        'epsilon': precision
+    }
+    out_sol(out, info)
+
+
+def out_sol(out, dict):
+    try:
+        results = call_from_dict(dict)
+        if dict['method'] == "All" :
+            for key in results:
+                if key == "Gauss siedel":
+                    out_gauss_seidel(out, key)
+                else:
+                    out_methods(out, results[key], key)
+        elif dict['method'] == "Gauss seidel":
+            out_gauss_seidel(out, results)
+        else:
+            out_methods(out, results, dict['method'])
+    except Exception as e:
+        update_output(out, e, color="red", append=True)
+
+def out_methods(out, results, method):
+    update_output(out, method.upper() + "\n", append=True)
+    update_output(out, "Solution: \n", append=True)
+    print_sol(out, results['solution'])
+    update_output(out, "Time elapsed: " + str(results['time']) + "\n", append=True)
+
+def out_gauss_seidel(out, results): 
+    update_output(out, "GAUSS SEIDEL\n", append=True)
+    update_output(out, "Solution: \n", append=True)
+    print_sol(out, results['solution'])
+    update_output(out, "Time elapsed: " + str(results['time']) + "\n", append=True)
+    update_output(out, "Precision: " + str(results['epsilon']) + "\n", append=True)
+    update_output(out, "Iterations: " + str(results['iterations']) + "\n", append=True)
+    
+def print_sol(out, solution):
+    for i in range(len(solution)):
+        update_output(out, 'X' + str(i) + "= " + str(solution[i]) + "\n", append=True)

@@ -92,6 +92,7 @@ def call_from_dict(info):
             max_iterations = info.get('max iterations'),
             tolerance = info.get('epsilon')
         )
+        return results
     else: 
         raise NotImplementedError
 
