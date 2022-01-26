@@ -34,9 +34,6 @@ def run():
     numofeqn_var = tk.IntVar()
     numofeqn_var.set(3)
     numofeqn_spin = ttk.Spinbox(input_frame, textvariable=numofeqn_var, width=SPIN_WIDTH, from_=0, to=TO_X)
-    confirm_btn = ttk.Button(input_frame, text="Confirm", width=BUTTON_WIDTH + 2, command=lambda *args: gc.confirm(numofeqn_var.get(), reset_btn, enter_btn, exp_entry))
-    reset_btn = ttk.Button(input_frame, text="Reset", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.reset(output_txt, reset_btn, enter_btn, exp_entry))
-    enter_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_eqn(output_txt, exp_entry.get(), numofeqn_var.get(), enter_btn, exp_entry))
 
 
     enter_label= ttk.Label(input_frame, text="Enter equation", width=20)
@@ -47,12 +44,24 @@ def run():
 
     calc_btn = ttk.Button(input_frame, text="Calculate", command=lambda: gc.calc(vars, output_txt))
     gc.CreateToolTip(exp_entry, text = 'Make sure to confirm number of equations first!')
+
+    init_label= ttk.Label(input_frame, text="Initial values")
+    init_var = tk.DoubleVar()
+    init_entry = ttk.Entry(input_frame, textvariable=init_var, state="disabled")
+    enter_init_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_init_vals(output_txt, numofeqn_var.get(), init_entry, enter_init_btn))
+    gc.CreateToolTip(init_entry, text = 'Make sure to enter all equations first!')
+
+    confirm_btn = ttk.Button(input_frame, text="Confirm", width=BUTTON_WIDTH + 2, command=lambda *args: gc.confirm(numofeqn_var.get(), reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
+    reset_btn = ttk.Button(input_frame, text="Reset", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.reset(output_txt, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
+    enter_btn = ttk.Button(input_frame, text="Enter", state="disabled", width=BUTTON_WIDTH, command=lambda *args: gc.enter_eqn(output_txt, exp_entry.get(), numofeqn_var.get(), enter_btn, exp_entry, init_entry, enter_init_btn))
+
+
     methods = [
         "All",
         "Gaussian elimination",
         "LU decomposition",
         "Gaussian Jordan",
-        "Gaussian siedel"
+        "Gauss siedel"
     ]
     method = tk.StringVar()
     method.set(methods[0])
@@ -75,17 +84,13 @@ def run():
     var_widgets = [
         precision_label, precision_spin,
         maxiter_label, maxiter_spin,
+        init_label, init_entry,
+        enter_init_btn
     ]
 
-    vars = [
-        exp_entry,
-        method,
-        precision_var,
-        maxiter_var,
-    ]
 
     #method_options.bind('<<ComboboxSelected>>', lambda *args: gc.method_change(var_widgets, method.get(), methods, sim_btn))
-    method.trace_add("write", lambda *args: gc.method_change(var_widgets, method.get(), methods))
+    method.trace_add("write", lambda *args: gc.method_change(var_widgets, method.get(), methods, output_txt, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn))
     
     # Output widgets
     output_txt = tk.Text(output_frame, width=40, state="disabled", height=30, wrap=tk.NONE)
@@ -145,11 +150,15 @@ def run():
     enter_btn.grid(column=2, row=5, sticky=tk.W, padx=BUTTON_PAD, pady=BUTTON_PAD)
 
     
-    precision_label.grid(column=0, row=6, sticky=tk.W)
-    maxiter_label.grid(column=1, row=6, sticky=tk.W)
+    init_label.grid(column=0, row=6, sticky=tk.W)
+    init_entry.grid(column=0, row=7, sticky=tk.W, pady=PADY_BOXES)
+    enter_init_btn.grid(column=1, row=7, sticky=tk.W, padx=BUTTON_PAD, pady=BUTTON_PAD)
 
-    precision_spin.grid(column=0, row=7, sticky=tk.W, pady=PADY_BOXES)
-    maxiter_spin.grid(column=1, row=7, sticky=tk.W, pady=PADY_BOXES)
+    precision_label.grid(column=0, row=8, sticky=tk.W)
+    maxiter_label.grid(column=1, row=8, sticky=tk.W)
+
+    precision_spin.grid(column=0, row=9, sticky=tk.W, pady=PADY_BOXES)
+    maxiter_spin.grid(column=1, row=9, sticky=tk.W, pady=PADY_BOXES)
 
 
     calc_btn.grid(column=3, row=12, padx=10, pady=10)

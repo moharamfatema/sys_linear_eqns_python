@@ -1,6 +1,7 @@
 import json
 from operator import eq
 from turtle import color
+from matplotlib.image import NonUniformImage
 import pandas as pd
 import numpy as np
 from math import exp
@@ -13,8 +14,11 @@ import tkinter as tk
 from tkinter import E, filedialog
 from tkinter import messagebox
 
+from parse import INIT
+
 
 EQUATIONS = []
+INIT_VALS = []
 
 class ToolTip(object):
 
@@ -69,7 +73,7 @@ def destroyer(root):
         root.destroy()
         sys.exit()
 
-def method_change(all_widgets, method_name, methods_list):
+def method_change(all_widgets, method_name, methods_list, out, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn):
     # receive list of widgets and the method name chosen
     # remove visible widgets from grid
     # if name is bisection or regula falsi: show widgets for lowerbound and upperbound
@@ -82,11 +86,17 @@ def method_change(all_widgets, method_name, methods_list):
         widget.grid_remove()
     
     if method_name == methods_list[0] or method_name == methods_list[4]:
-        all_widgets[0].grid(column=0, row=6, sticky=tk.W)
-        all_widgets[2].grid(column=1, row=6, sticky=tk.W)
+        all_widgets[0].grid(column=0, row=8, sticky=tk.W)
+        all_widgets[2].grid(column=1, row=8, sticky=tk.W)
 
-        all_widgets[1].grid(column=0, row=7, sticky=tk.W, pady=(0, 5))
-        all_widgets[3].grid(column=1, row=7, sticky=tk.W, pady=(0, 5))
+        all_widgets[1].grid(column=0, row=9, sticky=tk.W, pady=(0, 5))
+        all_widgets[3].grid(column=1, row=9, sticky=tk.W, pady=(0, 5))
+
+        all_widgets[4].grid(column=0, row=6, sticky=tk.W)
+        all_widgets[5].grid(column=0, row=7, sticky=tk.W, pady=(0, 5))
+        all_widgets[6].grid(column=1, row=7, sticky=tk.W, pady=(0, 5))
+    reset(out, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn)
+
 
 def choose_file(exp_entry, out):
     filename = filedialog.askopenfilename(initialdir="", title="Choose a file", filetypes=(("Text files", "*.txt"), ("JSON files", "*.json"), ("All files", "*.*")))
@@ -108,8 +118,9 @@ def update_output(output, text, color="black", append=False):
         output.insert('1.0', text)
     output.configure(state='disabled')
 
-def confirm(numofeqns, reset_btn, enter_btn, exp_entry):
+def confirm(numofeqns, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn):
     global NUMBER_OF_EQUATIONS
+    global EQUATIONS
     NUMBER_OF_EQUATIONS = numofeqns
     if numofeqns > 0:
         reset_btn.configure(state="enable")
@@ -119,9 +130,11 @@ def confirm(numofeqns, reset_btn, enter_btn, exp_entry):
         reset_btn.configure(state="disabled")
         enter_btn.configure(state="disabled")
         exp_entry.configure(state="disabled")
+        init_entry.configure(state="disabled")
+        enter_init_btn.configure(state="disabled")
 
 
-def enter_eqn(out, equation, numofeqns, enter_btn, exp_entry):
+def enter_eqn(out, equation, numofeqns, enter_btn, exp_entry, init_entry, enter_init_btn):
     global NUMBER_OF_EQUATIONS
     global EQUATIONS
     if equation != '' and NUMBER_OF_EQUATIONS > 0:
@@ -131,14 +144,31 @@ def enter_eqn(out, equation, numofeqns, enter_btn, exp_entry):
             NUMBER_OF_EQUATIONS -= 1
             update_output(out, "Equation #" + str(numofeqns - NUMBER_OF_EQUATIONS) + ": " + equation + "\n", append=True)
         except Exception as e:
-            update_output(out, e, color="red", append=True)
+            update_output(out, e + "\n", color="red", append=True)
 
     if NUMBER_OF_EQUATIONS == 0:
+        NUMBER_OF_EQUATIONS = numofeqns
         enter_btn.configure(state="disabled")
         exp_entry.configure(state="disabled")
+        init_entry.configure(state="enabled")
+        enter_init_btn.configure(state="enabled") 
 
+def enter_init_vals(out, numofeqns, init_entry, enter_init_btn):
+    global INIT_VALS
+    global NUMBER_OF_EQUATIONS
+    if NUMBER_OF_EQUATIONS > 0:
+        try: 
+            init_val = float(init_entry.get())
+            NUMBER_OF_EQUATIONS -= 1
+            INIT_VALS.append(init_val)
+            update_output(out, "X" + str(numofeqns - NUMBER_OF_EQUATIONS) + "= " + str(init_val) + "\n", append=True)
+        except: 
+            update_output(out, "Enter a valid initial value!\n", color="red", append=True)
+    if NUMBER_OF_EQUATIONS == 0:
+        init_entry.configure(state="disabled")
+        enter_init_btn.configure(state="disabled") 
 
-def reset(out, reset_btn, enter_btn, exp_entry):
+def reset(out, reset_btn, enter_btn, exp_entry, init_entry, enter_init_btn):
     global NUMBER_OF_EQUATIONS
     global EQUATIONS
     NUMBER_OF_EQUATIONS = 0
@@ -148,6 +178,8 @@ def reset(out, reset_btn, enter_btn, exp_entry):
     enter_btn.configure(state="disabled")
     exp_entry.delete(0, tk.END)
     exp_entry.configure(state="disabled")
+    init_entry.configure(state="disabled")
+    enter_init_btn.configure(state="disabled")
 
 
 
@@ -198,5 +230,5 @@ def clear(exp_entry):
     exp_entry.delete(0, tk.END)
     exp_entry.focus()
 
-def calc ():
-    pass 
+def calc (method, numofeqns, precision, maxiter):
+    pass

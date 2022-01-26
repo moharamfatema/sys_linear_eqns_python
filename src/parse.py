@@ -16,7 +16,7 @@ def dict_from_file(file_name = 'in.txt'):
     for k in range(info[NO_EQNS]):
         info['equations'].append(f.readline().replace('\n',''))
 
-    if info['method'] == 'Gaussian-siedel' or info['method'] == 'All':
+    if info['method'] == 'Gauss siedel' or info['method'] == 'All':
         info[INIT] = f.readline().split()
         for k in range(info[NO_EQNS]):
             info[INIT][k] = np.double(info[INIT][k])
@@ -49,22 +49,23 @@ def get_coeff(info):
 
 def call_from_dict(info):
     method = info.get('method')
+    a, b, aug = get_coeff(info)
     if (method == 'Gaussian elimination'):
         return gauss_elimination(
             number_of_equations=info.get(NO_EQNS),
-            input_equations=info.get(AUG)
+            input_equations=aug
         )
     elif (method == 'Gaussian Jordan'):
         return gauss_jordan(
             number_of_equations=info.get(NO_EQNS),
-            input_equations=info.get(AUG)
+            input_equations=aug
         )
     elif (method == 'LU decomposition'):
         return lu_decomposition(
             number_of_equations=info.get(NO_EQNS),
-            input_equations=info.get(AUG)
+            input_equations=aug
         )
-    elif (method == 'Gaussian siedel'):
+    elif (method == 'Gauss siedel'):
         return  gauss_seidel(
             a = info.get('Coeff matrix'),
             b = info.get('B matrix'),
@@ -72,7 +73,26 @@ def call_from_dict(info):
             max_iterations = info.get('max iterations'),
             tolerance = info.get('epsilon')
         )
-    else:
+    elif method == "All":
+        results = {}
+        results["Gaussian elimination"] = gauss_elimination(
+            number_of_equations=info.get(NO_EQNS),
+            input_equations=aug
+        )
+        results['Gaussian Jordan'] =  gauss_jordan(
+            number_of_equations=info.get(NO_EQNS),
+            input_equations=aug
+        )
+        results['LU decomposition'] = lu_decomposition(
+            number_of_equations=info.get(NO_EQNS),
+            input_equations=aug
+        )
+        results['Gauss siedel'] = gauss_seidel(
+            initial_guesses = info.get(INIT),
+            max_iterations = info.get('max iterations'),
+            tolerance = info.get('epsilon')
+        )
+    else: 
         raise NotImplementedError
 
 def call_from_file(file_name = 'in.txt'):
