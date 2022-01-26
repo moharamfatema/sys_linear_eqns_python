@@ -110,6 +110,9 @@ def choose_file(out):
         
         except FileNotFoundError as e:
             update_output(out, e, color="red")
+
+        except SyntaxError: 
+            update_output(out, "Invalid Expression!", color="red")
     else:
         update_output(out, "Not a valid file!", color="red")   
 

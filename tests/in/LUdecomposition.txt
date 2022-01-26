@@ -1,5 +1,5 @@
 3
 LU decomposition
-3*a + 2*b + c - 6
-2*a + 3*b - 7 
-2*c - 4
+8*a + 4*b - c - 11
+-2*a + 3*b + c - 4 
+2*a - b + 6*c - 7

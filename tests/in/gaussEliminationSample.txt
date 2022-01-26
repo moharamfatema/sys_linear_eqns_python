@@ -1,5 +1,5 @@
 3
 Gaussian elimination
-3*a + 2*b + c - 6
-2*a + 3*b - 7 
-2*c - 4
+2*a - 6*b - c + 38
+-3*a - b + 7*c + 34 
+-8*a + b - 2*c + 20
